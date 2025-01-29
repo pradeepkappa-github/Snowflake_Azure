@@ -1,0 +1,75 @@
+create or replace storage integration azure_int
+  type = external_stage
+  storage_provider = azure
+  enabled = true
+  azure_tenant_id = '93148bf1-321f-4b66-be12-ce362739a043'
+  storage_allowed_locations = ('azure://snowblobsf.blob.core.windows.net/test','azure://snowblobsf.blob.core.windows.net/parquet')
+  
+CREATE FILE FORMAT "DEMO_DB"."PUBLIC".MY_PARQUET_STAGE TYPE = 'PARQUET' COMPRESSION = 'AUTO' BINARY_AS_TEXT = TRUE;
+  
+create or replace stage demo_db.public.my_azure_parquet_stage
+  storage_integration = azure_int
+  url = 'azure://snowblobsf.blob.core.windows.net/parquet'
+ -- file_format = my_csv_format;
+ 
+
+
+ 
+select $1 
+from @demo_db.public.my_azure_parquet_stage 
+(file_format => MY_PARQUET_STAGE )
+
+
+select 
+$1:BIRTHDATE,
+$1:country,
+$1:email,
+$1:first_name,
+$1:gender,
+$1:id,
+$1:ip_address,
+$1:last_name,
+$1:registration_dttm,
+$1:salary,
+$1:title
+from @demo_db.public.my_azure_parquet_stage 
+(file_format => MY_PARQUET_STAGE )
+
+-- filter
+
+select 
+$1:birthdate,
+$1:country,
+$1:email,
+$1:first_name,
+$1:gender,
+$1:id,
+$1:ip_address,
+$1:last_name,
+$1:registration_dttm,
+$1:salary,
+$1:title
+from @demo_db.public.my_azure_parquet_stage 
+(file_format => MY_PARQUET_STAGE )
+where $1:country='Canada'
+
+create or replace view demo_db.public.query_from_azure
+as
+select 
+$1:birthdate birthdate,
+$1:country country,
+$1:email email,
+$1:first_name first_name,
+$1:gender gender,
+$1:id id,
+$1:ip_address ip_address,
+$1:last_name last_name,
+$1:registration_dttm registration_dttm,
+$1:salary salary,
+$1:title title
+from @demo_db.public.my_azure_parquet_stage 
+(file_format => MY_PARQUET_STAGE )
+where $1:country='Canada'
+
+
+select * from demo_db.public.query_from_azure
