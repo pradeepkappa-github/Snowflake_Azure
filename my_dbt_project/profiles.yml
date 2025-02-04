@@ -1,0 +1,14 @@
+my_dbt_project:
+  target: dev
+  outputs:
+    dev:
+      type: snowflake
+      account: tc60666.south-central-us.azure
+      user: pradeepk
+      password: Pr@deepraju123
+      role: accountadmin
+      database: azure_snowflake
+      warehouse: compute_wh
+      schema: dbt_snowflake-azure
+      threads: 4
+      client_session_keep_alive: False
